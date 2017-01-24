@@ -15,10 +15,15 @@
   "scripts": {
     "build": "ember build",
     "start": "ember server",
-    "test": "ember try:each"
+    "test": "ember try:ember 2.11",
+    "test-all": "ember try:each"
   },
   "dependencies": {
-    "ember-cli-babel": "^5.1.7"
+    "ember-cli-babel": "^5.2.1",
+    "ember-cli-htmlbars": "^1.1.1",
+    "ember-cli-moment-shim": "^3.0.1",
+    "ember-intl": "^2.19.0",
+    "ember-moment": "^7.3.0"
   },
   "devDependencies": {
     "broccoli-asset-rev": "^2.4.5",

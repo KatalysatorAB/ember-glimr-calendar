@@ -1,0 +1,44 @@
+<div class="glimr--calendar-navigation">
+  <a class="glimr--calendar-previous" href="" {{action "previousMonth"}}>Previous</a>
+  <a class="glimr--calendar-next" href="" {{action "nextMonth"}}>Next</a>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th colspan="7">{{format-date date year='numeric' month='short'}}</th>
+    </tr>
+
+    <tr>
+      {{#each dayNames as |day|}}
+        <th>{{day}}</th>
+      {{/each}}
+    </tr>
+  </thead>
+
+  <tbody>
+    {{#each weeks as |week weekIndex|}}
+      <tr>
+        {{#each week as |day dayIndex|}}
+          {{#if day}}
+            <td
+              {{action "selectedDate" day on="click"}}
+              data-week={{weekIndex}}
+              data-day={{dayIndex}}
+              class="
+                {{glimr/-active-if-in activeDays (glimr/-from-moment day "date") class="glimr--calendar-active"}}
+                {{glimr/-active-if-in highlightedDays (glimr/-from-moment day "date") class="glimr--calendar-highlighted"}}
+                {{glimr/-active-if-in disabledCheck day class="glimr--calendar-disabled"}}
+                {{glimr/-active-if-in highlightCheck day class="glimr--calendar-active"}}
+                {{glimr/-active-if-in rangeCheck day class="glimr--calendar-range"}}
+              ">
+                {{glimr/-from-moment day "date"}}
+            </td>
+          {{else}}
+            <td></td>
+          {{/if}}
+        {{/each}}
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
