@@ -10,6 +10,15 @@ You need a highly customizable base for a calendar component? Well you got one!
 
 * `ember install glimr-calendar`
 
+### Translations
+
+[glimr-calendar](https://glimr.com/KatalysatorAB/glimr-calendar) depends on [ember-intl](https://github.com/jasonmit/ember-intl) for translations. For navigation you need to add the following keys to your translation files:
+
+```yaml
+"glimr.date.previous": "Previous"
+"glimr.date.next": "Next"
+```
+
 ## Usage
 
 ```hbs
