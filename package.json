@@ -1,12 +1,12 @@
 {
   "name": "glimr-calendar",
-  "version": "0.0.0",
-  "description": "The default blueprint for ember-cli addons.",
+  "version": "1.0.0",
+  "description": "Calendar components for Ember",
   "keywords": [
     "ember-addon"
   ],
   "license": "MIT",
-  "author": "",
+  "author": "Glimr AB",
   "directories": {
     "doc": "doc",
     "test": "tests"
