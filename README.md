@@ -1,4 +1,4 @@
-# glimr-calendar
+# glimr-calendar  [![Ember Observer Score](https://emberobserver.com/badges/glimr-calendar.svg)](https://emberobserver.com/addons/glimr-calendar)
 
 You need a highly customizable base for a calendar component? Well you got one!
 
