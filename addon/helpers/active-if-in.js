@@ -1,9 +1,6 @@
-import Ember from 'ember';
+import { helper as buildHelper } from '@ember/component/helper';
 
-export function activeIfIn(params, hash) {
-  const array = params[0];
-  const child = params[1];
-
+export function activeIfIn([array, child], hash) {
   const className = hash["class"];
 
   if (!className) {
@@ -17,4 +14,4 @@ export function activeIfIn(params, hash) {
   }
 }
 
-export default Ember.Helper.helper(activeIfIn);
+export default buildHelper(activeIfIn);

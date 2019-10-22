@@ -1,12 +1,12 @@
 <div class="glimr--calendar-navigation">
-  <a class="glimr--calendar-previous" href="" {{action "previousMonth"}}>{{t "glimr.date.previous"}}</a>
-  <a class="glimr--calendar-next" href="" {{action "nextMonth"}}>{{t "glimr.date.next"}}</a>
+  <a class="glimr--calendar-previous" href="" {{action this.previousMonth}}>{{t "glimr.date.previous"}}</a>
+  <a class="glimr--calendar-next" href="" {{action this.nextMonth}}>{{t "glimr.date.next"}}</a>
 </div>
 
 <table>
   <thead>
     <tr>
-      <th colspan="7">{{format-date date year='numeric' month='short'}}</th>
+      <th colspan="7">{{format-date date year="numeric" month="short"}}</th>
     </tr>
 
     <tr>
@@ -22,17 +22,19 @@
         {{#each week as |day dayIndex|}}
           {{#if day}}
             <td
-              {{action "selectedDate" day on="click"}}
+              {{action this.didSelectDate day on="click"}}
               data-week={{weekIndex}}
               data-day={{dayIndex}}
+              role="button"
               class="
                 {{glimr/-active-if-in activeDays (glimr/-from-moment day "date") class="glimr--calendar-active"}}
                 {{glimr/-active-if-in highlightedDays (glimr/-from-moment day "date") class="glimr--calendar-highlighted"}}
                 {{glimr/-active-if-in disabledCheck day class="glimr--calendar-disabled"}}
                 {{glimr/-active-if-in highlightCheck day class="glimr--calendar-active"}}
                 {{glimr/-active-if-in rangeCheck day class="glimr--calendar-range"}}
-              ">
-                {{glimr/-from-moment day "date"}}
+              "
+            >
+              {{glimr/-from-moment day "date"}}
             </td>
           {{else}}
             <td></td>

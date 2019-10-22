@@ -1,16 +1,16 @@
-import Ember from "ember";
-
 export function pointForElement(element) {
-  var offsetX = element.width() / 2;
-  var offsetY = element.height() / 2;
-  var pageX = element.offset().left + offsetX;
-  var pageY = element.offset().top + offsetY;
+  const pos = element.getBoundingClientRect();
+
+  const offsetX = pos.width / 2;
+  const offsetY = pos.height / 2;
+  const pageX = pos.left + offsetX;
+  const pageY = pos.top + offsetY;
 
   return {
-    pageX: pageX,
-    pageY: pageY,
-    clientX: pageX - Ember.$(document).scrollLeft(),
-    clientY: pageY - Ember.$(document).scrollTop(),
+    pageX: pageX + document.body.scrollLeft,
+    pageY: pageY + document.body.scrollTop,
+    clientX: pageX,
+    clientY: pageY,
     target: element[0]
   };
 }
@@ -19,18 +19,22 @@ export function dragFromTo(fromElement, toElement) {
   const fromPoint = pointForElement(fromElement);
   const toPoint = pointForElement(toElement);
 
-  const mouseDown = Ember.$.Event("mousedown");
-  Ember.assign(mouseDown, fromPoint);
+  const mouseDown = document.createEvent("HTMLEvents");
+  mouseDown.initEvent("mousedown", true, true);
 
-  fromElement.trigger(mouseDown);
+  Object.assign(mouseDown, fromPoint);
 
-  const mouseMove = Ember.$.Event("mousemove");
-  Ember.assign(mouseMove, toPoint);
+  fromElement.dispatchEvent(mouseDown);
 
-  Ember.$("body").trigger(mouseMove);
+  const mouseMove = document.createEvent("HTMLEvents");
+  mouseMove.initEvent("mousemove", true, true);
+  Object.assign(mouseMove, toPoint);
 
-  const mouseUp = Ember.$.Event("mouseup");
-  Ember.assign(mouseUp, toPoint);
+  document.body.dispatchEvent(mouseMove);
 
-  Ember.$("body").trigger(mouseUp);
+  const mouseUp = document.createEvent("HTMLEvents");
+  mouseUp.initEvent("mouseup", true, true);
+  Object.assign(mouseUp, toPoint);
+
+  document.body.dispatchEvent(mouseUp);
 }

@@ -1,4 +1,4 @@
-import Ember from 'ember';
+import { helper as buildHelper } from '@ember/component/helper';
 
 export function fromMoment(params/*, hash*/) {
   var momentDate = params[0];
@@ -6,4 +6,4 @@ export function fromMoment(params/*, hash*/) {
   return momentDate[method].call(momentDate);
 }
 
-export default Ember.Helper.helper(fromMoment);
+export default buildHelper(fromMoment);

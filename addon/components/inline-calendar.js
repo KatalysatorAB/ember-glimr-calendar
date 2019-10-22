@@ -1,82 +1,118 @@
-import Ember from "ember";
-import moment from "moment";
+import Component from "@ember/component";
+import layout from '../templates/components/inline-calendar';
+
+import { computed, action } from "@ember/object";
+import { isArray } from '@ember/array';
 
 import calendar from "glimr-calendar/lib/calendar";
-import Draggable from "glimr-calendar/mixins/draggable";
+import Draggable from "glimr-calendar/lib/draggable";
 
 import { weekdaysShort } from "glimr-calendar/lib/calendar";
 
-export default Ember.Component.extend(Draggable, {
-  classNames: ["glimr--inline-calendar"],
-  classNameBindings: ["fullwide:glimr--calendar-fullwide"],
+export default class InlineCalendar extends Component.extend({
+  layout
+}) {
+  classNames = ["glimr--inline-calendar"];
+  classNameBindings = ["fullwide:glimr--calendar-fullwide"];
 
-  fullwide: true,
+  fullwide = true;
 
-  moment: Ember.computed(function() {
-    return moment();
-  }),
+  clickToRange = false;
 
-  clickToRange: false,
-  ranges: Ember.computed(function() { return []; }),
-  selectedDates: Ember.computed(function() { return []; }),
-  highlightedDates: Ember.computed(function() { return []; }),
-  highlightFrom: false,
-  highlightTo: false,
-  disabledFrom: false,
-  disabledTo: false,
+  init() {
+    super.init();
+
+    this.draggable = new Draggable({
+      dragStarted: this.dragStarted,
+      dragMoved: this.dragMoved,
+      dragEnded: this.dragEnded,
+    });
+  }
+
+  willDestroyElement() {
+    super.willDestroyElement();
+    this.draggable.destroy();
+  }
+
+  mouseDown(event) {
+    this.draggable.mouseDown(event);
+  }
+
+  @computed()
+  get selectedDates() {
+    return [];
+  }
+
+  highlightedDates() {}
+
+  // actions
+  selectedDate() {}
+  addRange() {}
+  updateDate() {}
+
+  highlightFrom = false;
+  highlightTo = false;
+  disabledFrom = false;
+  disabledTo = false;
 
   // Private
-  currentDragRange: false,
+  currentDragRange = false;
 
-  date: Ember.computed("moment", function() {
+  @computed("moment")
+  get date() {
     return this.get("moment").toDate();
-  }),
+  }
 
-  dayNames: Ember.computed("moment", function() {
+  @computed("moment")
+  get dayNames() {
     return weekdaysShort();
-  }),
+  }
 
-  weeks: Ember.computed("moment", function() {
+  @computed("moment")
+  get weeks() {
     return calendar(this.get("moment"));
-  }),
+  }
 
-  activeDays: Ember.computed("selectedDates.[]", "moment", function() {
-    var selectedDates = this.get("selectedDates");
+  @computed("selectedDates.[]", "moment")
+  get activeDays() {
+    let selectedDates = this.get("selectedDates");
     if (!selectedDates) {
       return [];
     }
 
-    if (!Ember.isArray(selectedDates)) {
+    if (!isArray(selectedDates)) {
       selectedDates = [selectedDates];
     }
 
-    var currentMoment = this.get("moment");
+    let currentMoment = this.get("moment");
 
     return selectedDates
       .filter((date) => date.isSame(currentMoment, 'month'))
       .map((date) => date.date());
-  }),
+  }
 
-  highlightedDays: Ember.computed("highlightedDates.[]", "moment", function() {
-    var highlightedDates = this.get("highlightedDates");
+  @computed("highlightedDates.[]", "moment")
+  get highlightedDays() {
+    let highlightedDates = this.get("highlightedDates");
     if (!highlightedDates) {
       return [];
     }
 
-    if (!Ember.isArray(highlightedDates)) {
+    if (!isArray(highlightedDates)) {
       highlightedDates = [highlightedDates];
     }
 
-    var currentMoment = this.get("moment");
+    let currentMoment = this.get("moment");
 
     return highlightedDates
       .filter((date) => date.isSame(currentMoment, "month"))
       .map((date) => date.date());
-  }),
+  }
 
-  highlightCheck: Ember.computed("highlightFrom", "highlightTo", function() {
-    var from = this.get("highlightFrom");
-    var to = this.get("highlightTo");
+  @computed("highlightFrom", "highlightTo")
+  get highlightCheck() {
+    let from = this.get("highlightFrom");
+    let to = this.get("highlightTo");
 
     return (date) => {
       if (!from || !to || !date) {
@@ -85,11 +121,12 @@ export default Ember.Component.extend(Draggable, {
         return date.unix() >= from.unix() && date.unix() <= to.unix();
       }
     };
-  }),
+  }
 
-  disabledCheck: Ember.computed("disabledFrom", "disabledTo", function() {
-    var from = this.get("disabledFrom");
-    var to = this.get("disabledTo");
+  @computed("disabledFrom", "disabledTo")
+  get disabledCheck() {
+    let from = this.get("disabledFrom");
+    let to = this.get("disabledTo");
 
     return (date) => {
       if (!date) {
@@ -106,9 +143,10 @@ export default Ember.Component.extend(Draggable, {
       }
       return false;
     };
-  }),
+  }
 
-  rangeCheck: Ember.computed("ranges.[]", "currentDragRange", function() {
+  @computed("ranges.[]", "currentDragRange")
+  get rangeCheck() {
     return (date) => {
       if (!date) {
         return false;
@@ -123,36 +161,39 @@ export default Ember.Component.extend(Draggable, {
           range[1].isAfter(date.clone().startOf("day"));
       });
     };
-  }),
+  }
 
+  @action
   shouldStartDrag() {
     return this.get("clickToRange");
-  },
+  }
 
+  @action
   dateFromEvent(event) {
     if (event.target.dataset.week && !event.target.classList.contains("disabled")) {
       return this.get("weeks")[event.target.dataset.week][event.target.dataset.day];
     } else {
       return false;
     }
-  },
+  }
 
-  // Override in implementors
+  @action
   dragStarted(mousePosition, event) {
-    var date = this.dateFromEvent(event);
+    let date = this.dateFromEvent(event);
     if (date) {
       this.set("currentDragRangeStart", date);
     }
-  },
+  }
 
+  @action
   dragMoved(mousePosition, event) {
-    var date = this.dateFromEvent(event);
+    let date = this.dateFromEvent(event);
     if (!date) {
       return;
     }
 
-    var startDate = this.get("currentDragRangeStart");
-    var newRange = [];
+    let startDate = this.get("currentDragRangeStart");
+    let newRange = [];
     if (startDate.unix() < date.unix()) {
       newRange = [startDate.clone().startOf("day"), date.clone().endOf("day")];
     } else {
@@ -160,36 +201,38 @@ export default Ember.Component.extend(Draggable, {
     }
 
     this.set("currentDragRange", newRange);
-  },
+  }
 
+  @action
   dragEnded(mousePosition) {
     if (this.get("currentDragRangeStart")) {
       if (Math.sqrt(Math.pow(mousePosition.deltaX, 2) + Math.pow(mousePosition.deltaY, 2)) < 5) {
-        this.sendAction("selectedDate", this.get("currentDragRangeStart"));
+        this.selectedDate(this.get("currentDragRangeStart"));
       } else if (this.get("currentDragRange")) {
-        this.sendAction("addRange", this.get("currentDragRange"));
+        this.addRange(this.get("currentDragRange"));
       }
     }
 
     this.set("currentDragRangeStart", false);
     this.set("currentDragRange", false);
-  },
+  }
 
-  actions: {
-    previousMonth() {
-      this.set("moment", this.get("moment").clone().subtract(1, "month"));
-      this.sendAction("updateDate", this.get("moment"));
-    },
+  @action
+  previousMonth() {
+    this.set("moment", this.get("moment").clone().subtract(1, "month"));
+    this.updateDate(this.get("moment"));
+  }
 
-    nextMonth() {
-      this.set("moment", this.get("moment").clone().add(1, "month"));
-      this.sendAction("updateDate", this.get("moment"));
-    },
+  @action
+  nextMonth() {
+    this.set("moment", this.get("moment").clone().add(1, "month"));
+    this.updateDate(this.get("moment"));
+  }
 
-    selectedDate(date) {
-      if (!this.get("clickToRange") && !this.get("disabledCheck")(date)) {
-        this.sendAction("selectedDate", date);
-      }
+  @action
+  didSelectDate(date) {
+    if (!this.get("clickToRange") && !this.get("disabledCheck")(date)) {
+      this.selectedDate(date);
     }
   }
-});
+}

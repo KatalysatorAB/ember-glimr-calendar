@@ -6,7 +6,6 @@ You need a highly customizable base for a calendar component? Well you got one!
 - Click to select dates
 - Navigation previous/next month
 
-## Installation
 
 * `ember install glimr-calendar`
 
